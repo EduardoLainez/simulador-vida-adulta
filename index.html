@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Simulador de Vida Adulta™</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f2f2f2;
+      color: #333;
+      padding: 40px;
+      max-width: 700px;
+      margin: auto;
+    }
+    h1 {
+      text-align: center;
+      font-size: 2.5em;
+    }
+    .scenario {
+      margin-top: 30px;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .options button {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 1em;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background-color: #444;
+      color: white;
+      transition: 0.3s;
+    }
+    .options button:hover {
+      background-color: #222;
+    }
+    .response {
+      margin-top: 20px;
+      font-style: italic;
+    }
+    .score {
+      margin-top: 30px;
+      padding: 15px;
+      background: #d2ffd2;
+      border-left: 5px solid #2ecc71;
+      border-radius: 8px;
+      display: none;
+    }
+    footer {
+      margin-top: 50px;
+      text-align: center;
+      font-size: 0.9em;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Simulador de Vida Adulta™</h1>
+
+  <div id="game" class="scenario">
+    <p id="question">Cargando escenario...</p>
+    <div id="options" class="options"></div>
+    <div id="response" class="response"></div>
+  </div>
+
+  <div id="score" class="score"></div>
+
+  <footer>Hecho con estrés crónico y café ☕</footer>
+
+  <script>
+    const scenarios = [
+      {
+        question: "Te llega un email del trabajo a las 23:48. ¿Qué haces?",
+        options: [
+          { text: "Lo abres de inmediato.", points: 1, response: "Ahora eres el voluntario eterno de tareas no pagadas." },
+          { text: "Lo ignoras.", points: 2, response: "Te despiertas con 37 mensajes en Slack y remordimiento leve." },
+          { text: "Lo marcas como leído sin abrirlo.", points: 3, response: "Una jugada maestra. También perdiste un bono sorpresa." }
+        ]
+      },
+      {
+        question: "Se corta el Wi-Fi en una videollamada. ¿Qué haces?",
+        options: [
+          { text: "Pánico, reinicias el router como si fueras técnico de NASA.", points: 2, response: "Igual no vuelve, pero finges profesionalismo." },
+          { text: "Te haces el congelado y esperas que te saquen.", points: 3, response: "Actuación digna de premio Emmy." },
+          { text: "Mandas un WhatsApp con 'se me fue la luz'.", points: 1, response: "Excusa clásica. Ya no cuela." }
+        ]
+      },
+      {
+        question: "Te invitan a una salida social un viernes a las 21:00.",
+        options: [
+          { text: "Vas. Te arrepientes al llegar.", points: 2, response: "Socializaste. Pero tu alma ya está en pijama." },
+          { text: "Pones excusa y no vas.", points: 3, response: "Triunfo absoluto. Noche de sofá, pizza y dignidad." },
+          { text: "Dices que sí... y luego cancelas último minuto.", points: 1, response: "Estás en la lista negra del grupo." }
+        ]
+      }
+    ];
+
+    let current = 0;
+    let totalScore = 0;
+
+    function loadScenario() {
+      const s = scenarios[current];
+      document.getElementById("question").textContent = s.question;
+      const optionsDiv = document.getElementById("options");
+      optionsDiv.innerHTML = "";
+      document.getElementById("response").textContent = "";
+
+      s.options.forEach((opt, index) => {
+        const btn = document.createElement("button");
+        btn.textContent = opt.text;
+        btn.onclick = () => {
+          totalScore += opt.points;
+          document.getElementById("response").textContent = opt.response;
+          setTimeout(() => {
+            current++;
+            if (current < scenarios.length) {
+              loadScenario();
+            } else {
+              endGame();
+            }
+          }, 1200);
+        };
+        optionsDiv.appendChild(btn);
+      });
+    }
+
+    function endGame() {
+      document.getElementById("game").style.display = "none";
+      const result = document.getElementById("score");
+      let message = "";
+
+      if (totalScore <= 4) {
+        message = "Nivel: Sobreviviente 🧯. Te las arreglas... apenas.";
+      } else if (totalScore <= 6) {
+        message = "Nivel: Funcional ⚙️. No estás roto, solo agrietado.";
+      } else {
+        message = "Nivel: Pro Adulto 🧠. Has dominado el arte del cansancio elegante.";
+      }
+
+      result.innerHTML = `<strong>Tu Score de Adulto™:</strong><br>${message}`;
+      result.style.display = "block";
+    }
+
+    loadScenario();
+  </script>
+</body>
+</html>
